@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Processando...</title></head>
+<body>
+    <p id="status">Conectando...</p>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const userId = params.get('state');
+
+        fetch('https://seu-n8n.com/webhook/google-callback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, userId })
+        })
+        .then(r => document.getElementById('status').textContent = 'Conectado!')
+        .catch(e => document.getElementById('status').textContent = 'Erro');
+    </script>
+</body>
+</html>
