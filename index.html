@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><title>Conectar</title></head>
+<body>
+    <input type="email" id="userId" placeholder="Seu email" />
+    <button onclick="conectar()">Conectar Google</button>
+
+    <script>
+        const CLIENT_ID = 'SEU_CLIENT_ID';
+        const REDIRECT = 'https://seuuser.github.io/seurepo/callback.html';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+
+        function conectar() {
+            const userId = document.getElementById('userId').value;
+            const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=code&scope=${encodeURIComponent(SCOPES)}&access_type=offline&prompt=consent&state=${encodeURIComponent(userId)}`;
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
