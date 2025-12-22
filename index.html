@@ -1,19 +1,73 @@
 <!DOCTYPE html>
-<html>
-<head><title>Conectar</title></head>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectar Google Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+    </style>
+</head>
 <body>
-    <input type="email" id="userId" placeholder="Seu email" />
-    <button onclick="conectar()">Conectar Google</button>
+    <h1>🗓️ Conectar Calendar</h1>
+    <p>Conecte sua conta Google para sincronizar suas reuniões.</p>
+    
+    <input type="email" id="userId" placeholder="Seu email" required />
+    <button onclick="conectar()">Conectar com Google</button>
 
     <script>
-        const CLIENT_ID = 'SEU_CLIENT_ID';
-        const REDIRECT = 'https://seuuser.github.io/seurepo/callback.html';
+        // === CONFIGURE AQUI ===
+        const CLIENT_ID = '117328948162-iqpsv1cd1o8db7qnfkf0rihp99m0u5lm.apps.googleusercontent.com';
+        const REDIRECT_URI = 'https://bernardinor.github.io/test123/callback.html';
+        // ======================
+        
         const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
         function conectar() {
             const userId = document.getElementById('userId').value;
-            const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=code&scope=${encodeURIComponent(SCOPES)}&access_type=offline&prompt=consent&state=${encodeURIComponent(userId)}`;
-            window.location.href = url;
+            
+            if (!userId) {
+                alert('Digite seu email');
+                return;
+            }
+            
+            const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+                'client_id=' + encodeURIComponent(CLIENT_ID) +
+                '&redirect_uri=' + encodeURIComponent(REDIRECT_URI) +
+                '&response_type=code' +
+                '&scope=' + encodeURIComponent(SCOPES) +
+                '&access_type=offline' +
+                '&prompt=consent' +
+                '&state=' + encodeURIComponent(userId);
+            
+            window.location.href = authUrl;
         }
     </script>
 </body>
