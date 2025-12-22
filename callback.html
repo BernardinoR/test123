@@ -1,21 +1,83 @@
 <!DOCTYPE html>
-<html>
-<head><title>Processando...</title></head>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processando...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .loading {
+            color: #666;
+        }
+        .success {
+            color: #34a853;
+        }
+        .error {
+            color: #ea4335;
+        }
+    </style>
+</head>
 <body>
-    <p id="status">Conectando...</p>
+    <h1 id="title">⏳ Processando...</h1>
+    <p id="status" class="loading">Conectando sua conta Google...</p>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        const userId = params.get('state');
+        // === CONFIGURE AQUI ===
+        const WEBHOOK_URL = 'https://webhooks.snowealth.com.br/webhook/google-callback';
+        // ======================
 
-        fetch('https://seu-n8n.com/webhook/google-callback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, userId })
-        })
-        .then(r => document.getElementById('status').textContent = 'Conectado!')
-        .catch(e => document.getElementById('status').textContent = 'Erro');
+        async function processarCallback() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            const userId = params.get('state');
+            const error = params.get('error');
+
+            if (error) {
+                mostrarErro('Autenticação cancelada ou negada');
+                return;
+            }
+
+            if (!code) {
+                mostrarErro('Código de autorização não encontrado');
+                return;
+            }
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, userId })
+                });
+
+                if (response.ok) {
+                    mostrarSucesso();
+                } else {
+                    mostrarErro('Erro ao salvar credenciais');
+                }
+            } catch (e) {
+                mostrarErro('Erro de conexão: ' + e.message);
+            }
+        }
+
+        function mostrarSucesso() {
+            document.getElementById('title').textContent = '✅ Conectado!';
+            document.getElementById('status').textContent = 'Sua conta foi conectada com sucesso. Pode fechar esta página.';
+            document.getElementById('status').className = 'success';
+        }
+
+        function mostrarErro(msg) {
+            document.getElementById('title').textContent = '❌ Erro';
+            document.getElementById('status').textContent = msg;
+            document.getElementById('status').className = 'error';
+        }
+
+        processarCallback();
     </script>
 </body>
 </html>
